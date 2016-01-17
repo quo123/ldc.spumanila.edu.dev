@@ -13,49 +13,49 @@
  *	0.4.0	- migrated to mysqli
  *	0.3.2	- added last insert id method
  *	0.3.1	- fixed bug on nonstandard character queries
-
-	==Usage instructions==
-	General:
-	Php symbol "->" is equivalent to java/.net ".".
-		Ex:	PHP		- Object->method("args");
-			Java	- Object.method("args");
-
-	Create a new DB connection using:
-		$db = new DBObject("database_name"); OR
-		$db = new DBObject("database_name", "host_name"); OR
-		$db = new DBObject("database_name", "host_name", "user_name"); OR
-		$db = new DBObject("database_name", "host_name", "user_name", "password");
-
-	IMPORTANT! USE escape() FUNCTION FOR NON-HASHED QUERY VARS AND PRE_HASHED PASSWORD:
-		$usern = $db->escape($_POST["username"]); //escape to protect against SQL injection attacks
-		$sql = "SELECT * FROM usertable WHERE username = '$usern' AND userpass = '$encpass'";
-		$sql = "INSERT INTO usertable VALUES ('$usern', '$encpass')";
-
-	IMPORTANT! USE intval() when using ints in query:
-		$id = intval($id);
-		$sql = "SELECT * FROM usertable WHERE userid = $id";
-
-	SELECT statements:
-		$sql = "SELECT ...";
-		$result = $db->query($sql);
-		if ($row = mysqli_fetch_array($result)) {
-			//TODO: code that operates on query results [$row]
-		} else {
-			//TODO: code that runs if $row is empty
-		}
-			OR
-		while ($row = mysqli_fetch_array($result)) {
-			//TODO: code that operates on query results [$row]
-		}
-
-	INSERT and DELETE statements:
-		$sql = "INSERT ...";
-		if ($db->query($sql)) {
-			//TODO: code for successful update
-		} else {
-			//TODO: code for failed update
-		}
-*/
+ *
+ *	==Usage instructions==
+ *	General:
+ *	Php symbol "->" is equivalent to java/.net ".".
+ *		Ex:	PHP		- Object->method("args");
+ *			Java	- Object.method("args");
+ *
+ *	Create a new DB connection using:
+ *		$db = new DBObject("database_name"); OR
+ *		$db = new DBObject("database_name", "host_name"); OR
+ *		$db = new DBObject("database_name", "host_name", "user_name"); OR
+ *		$db = new DBObject("database_name", "host_name", "user_name", "password");
+ *
+ *	IMPORTANT! USE escape() FUNCTION FOR NON-HASHED QUERY VARS AND PRE_HASHED PASSWORD:
+ *		$usern = $db->escape($_POST["username"]); //escape to protect against SQL injection attacks
+ *		$sql = "SELECT * FROM usertable WHERE username = '$usern' AND userpass = '$encpass'";
+ *		$sql = "INSERT INTO usertable VALUES ('$usern', '$encpass')";
+ *
+ *	IMPORTANT! USE intval() when using ints in query:
+ *		$id = intval($id);
+ *		$sql = "SELECT * FROM usertable WHERE userid = $id";
+ *
+ *	SELECT statements:
+ *		$sql = "SELECT ...";
+ *		$result = $db->query($sql);
+ *		if ($row = mysqli_fetch_array($result)) {
+ *			//TODO: code that operates on query results [$row]
+ *		} else {
+ *			//TODO: code that runs if $row is empty
+ *		}
+ *			OR
+ *		while ($row = mysqli_fetch_array($result)) {
+ *			//TODO: code that operates on query results [$row]
+ *		}
+ *
+ *	INSERT and DELETE statements:
+ *		$sql = "INSERT ...";
+ *		if ($db->query($sql)) {
+ *			//TODO: code for successful update
+ *		} else {
+ *			//TODO: code for failed update
+ *		}
+ */
 class DBObject {
 	private $database;
 	private $host;
