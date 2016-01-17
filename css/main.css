@@ -1,0 +1,48 @@
+/* 
+    Created on : Jan 18, 2016, 1:42:10 AM
+    Author     : ALVIN.B
+*/
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.focusglow {
+	-webkit-transition: box-shadow .125s ease;
+    -moz-transition: box-shadow .125s ease;
+    -ms-transition: box-shadow .125s ease;
+    -o-transition: box-shadow .125s ease;
+    transition: box-shadow .125s ease;
+}
+
+.focusglow:focus {
+	-webkit-box-shadow: 0px 0px 5px 3px #424445;
+	-moz-box-shadow: 0px 0px 5px 3px #424445;
+	box-shadow: 0px 0px 5px 3px #424445;
+	outline: none;
+}
+
+.invisible {
+	background: none repeat scroll 0% 0% transparent !important;
+}
+
+.nodisplay {
+	display: none !important;
+}
+
+.allcaps {
+	text-transform: uppercase;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
