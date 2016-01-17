@@ -1,9 +1,6 @@
 $(function() {
 
-console.log('asd');
-
-
-
+console.log('asds');
 
 
 })
