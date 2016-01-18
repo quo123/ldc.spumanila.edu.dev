@@ -30,6 +30,33 @@ $cooking = $session->init();
 	</header>
 	
 	<div id="body">
+		<div class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-dialog-buttons sample-div-dialog">
+			<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
+				<span class="ui-dialog-title">Dialog Title</span>
+				<button title="Close" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close" type="button">
+					<span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span>
+					<span class="ui-button-text">Close</span>
+				</button>
+			</div>
+			<fieldset>
+				<legend>Sample Buttons</legend>
+				<div class="sample-flex-container ui-dialog-content ui-widget-content" id="buttonset">					
+				<?php
+				for ($i = 0; $i < 10; $i++) {
+				?>
+					<input type="checkbox" id="button<?=$i?>" value="Sample Button"/><label for="button<?=$i?>"><?=$i%3 == 0 ? 'Long Label Sample' : 'Choice'?> <?=$i?></label>
+				<?php
+				}
+				?>
+				</div>
+			</fieldset>
+			<div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+				<div class="ui-dialog-buttonset">
+					<button role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button"><span class="ui-button-text">Ok</span></button>
+					<button role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button"><span class="ui-button-text">Cancel</span></button>
+				</div>
+			</div>
+		</div>
 		<div id="container" class="constrain<?php echo $cooking ? '' : ' splash'; ?>">
 			
 		</div>
@@ -38,7 +65,12 @@ $cooking = $session->init();
 	<div id="footer">
 		
 	</div>	
+<script>
+$(function() {
+	$('#buttonset').buttonset();
+	$('#buttonset .ui-button').addClass('sample-button').removeClass('ui-corner-left').removeClass('ui-corner-right');
+})
+</script>
 </body>
-
 
 </html>
