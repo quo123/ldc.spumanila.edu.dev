@@ -43,27 +43,4 @@ if (!empty($_POST['username']) && !empty($_POST['userpass'])) {
 		}
 	}
 	die(json_encode($json));
-	
-	
-//	if (($result = $db->query($sql)) && (mysqli_num_rows($result) > 0)) {
-//		$row = mysqli_fetch_assoc($result);
-//		if ($row['status']) {
-//			init_session();
-//			init_my_cookie();
-//			$_SESSION['userid'] = $row['userid'];
-//			$_SESSION['username'] = $row['username'];
-//			$_SESSION['status'] = $row['status'];
-//			$_SESSION['admin'] = $row['admin'];
-//			extend_timeout();
-//			
-//			$json['status'] = 0;
-//			$json['response'] = "Welcome back, {$row['username']}!";
-//		} else {
-//			$json['status'] = 2;
-//			$json['response'] = 'This account has not yet been activated.';
-//		}
-//	} else {
-//		$json['status'] = 1;
-//		$json['response'] = 'Invalid username/password.';
-//	}
 }
