@@ -11,9 +11,9 @@ class MySessions {
 	
 	/**
 	 * 
-	 * @param type $cookiename
-	 * @param type $cookieduration
-	 * @param type $cookieextend
+	 * @param string $cookiename The name of the cookie.
+	 * @param int $cookieduration Cookie's lifetime in seconds.
+	 * @param int $cookieextend Amount in seconds the cookie's lifetime will be extended on refresh.
 	 */
 	public function __construct($cookiename = '__cookie', $cookieduration = 3600, $cookieextend = 1800) {
 		$this->cookiename = $cookiename;
@@ -37,19 +37,19 @@ class MySessions {
 	}
 		
 	public function cook() {
-		setcookie($this->cookiename, session_id(), time()+$this->cookieduration, '/');
+		return setcookie($this->cookiename, session_id(), time()+$this->cookieduration, '/');
 	}
 
 	public function kill() {
-		setcookie($this->cookiename, session_id(), time()-3600, '/');
+		return setcookie($this->cookiename, session_id(), time()-3600, '/');
 	}
 
 	public function extend() {
 		$_SESSION['timeout'] = time()+$this->cookieextend;
+		return $_SESSION['timeout'];
 	}
 
 	public function refresh(DBObject $db, $table = 'userinfo', $fields = ['userid'], $status = 'status') {
-//		$db = new DBObject('cdc');
 		$sql = "SELECT * FROM $table WHERE {$fields[0]} = {$_SESSION[$fields[0]]}";
 
 		if (($result = $db->query($sql)) && (mysqli_num_rows($result) > 0)) {
@@ -62,7 +62,8 @@ class MySessions {
 			}
 			return true;
 		} else {
-			echo $db->getError();
+//			echo $db->getError();
+			error_log($db->getError());
 			return false;
 		}
 	}

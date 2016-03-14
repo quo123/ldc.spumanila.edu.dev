@@ -11,3 +11,7 @@ function getSettings() {
 		return false;
 	}
 }
+
+function getBackgroundImage($i) {
+	return "images/bg$i.jpg";	
+}

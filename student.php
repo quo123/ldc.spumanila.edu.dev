@@ -1,9 +1,10 @@
 <?php
 date_default_timezone_set('Asia/Manila');
+require_once 'includes/constants.php';
 require_once 'includes/MySessions.php'; //DBObject included
 require_once 'includes/util.php';
 //require_once 'includes/functions.php';
-$session = new MySessions('__ldc');
+$session = new MySessions(COOKIE_NAME);
 $cooking = $session->init();
 
 ?>

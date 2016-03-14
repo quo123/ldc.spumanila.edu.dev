@@ -1,51 +1,78 @@
-/* 
-    Created on : Jan 18, 2016, 1:42:10 AM
-    Author     : ALVIN.B
-*/
-.noselect {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.focusglow {
-	-webkit-transition: box-shadow .125s ease;
-    -moz-transition: box-shadow .125s ease;
-    -ms-transition: box-shadow .125s ease;
-    -o-transition: box-shadow .125s ease;
-    transition: box-shadow .125s ease;
-}
-
-.focusglow:focus {
-	-webkit-box-shadow: 0px 0px 5px 3px #424445;
-	-moz-box-shadow: 0px 0px 5px 3px #424445;
-	box-shadow: 0px 0px 5px 3px #424445;
-	outline: none;
-}
-
-.invisible {
-	background: none repeat scroll 0% 0% transparent !important;
-}
-
-.nodisplay {
-	display: none !important;
-}
-
-.allcaps {
-	text-transform: uppercase;
-}
 
 * {
     box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	/*background-color: #1c1c1c;*/
+	background-color: rgb(24, 29, 32);
+	font-family: 'Quicksand', Arial, sans-serif;
+	/*font-weight: 300;*/
+	color: #F9F9F9;
 }
 
 a {
 	color: inherit;
 	text-decoration: none;
 }
+
+
+/* Form Controls Styling */
+.generic-form input, textarea {
+	font-family: 'Open Sans', Arial, sans-serif;
+	background: none repeat scroll 0% 0% #E3E3E3;
+	border: medium none;
+	color: #474747;
+	font-size: 14px;
+	letter-spacing: 0.028em;
+	line-height: 18px;
+	/*width: 250px;*/
+	margin: 5px;
+	padding: 10px 5px;
+	display: block;
+}
+
+.generic-form input[type=submit], .generic-form button[type=button] {
+	font-family: 'Open Sans', Arial, sans-serif;
+	/*font-family: 'Quicksand', Arial, sans-serif;*/
+	background: none no-repeat center #1D4F73;
+	border: medium none;
+	color: #fff;
+	font-size: 14px;
+	letter-spacing: 0.028em;
+	line-height: 17px;
+	height: 37px;
+	/*width: 250px;*/
+	margin: 5px;
+	padding: 10px 5px;
+	display: block;
+	text-align: center;
+	transition: all 0.2s;
+	cursor: pointer;
+}
+
+.generic-form input[type=submit]:hover, .generic-form button[type=button]:hover {
+	background-color: #0078a3;
+}
+
+.generic-form input[type=submit]:active {
+/*	background-color: #0078a3;*/
+	background-color: #4D9BD6;
+	transition: all 0s;
+}
+
+.generic-form button[type=button]:active {
+	background-color: #4D9BD6;
+}
+
+.button-loading {
+	transition: all 0.2s;
+	background: url('images/loading5.gif') no-repeat center #4D9BD6 !important;
+	color: #fff !important;
+	cursor: default;
+}
+
 
 /* flexbox buttonset */
 .sample-div-dialog {

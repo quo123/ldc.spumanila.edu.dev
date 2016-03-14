@@ -1,0 +1,132 @@
+header {
+	z-index: 5;
+}
+
+#main-header {
+	position: relative;
+}
+
+header .overlay {
+	flex: none;
+	position: absolute;
+	top: 0px;
+	width: 100%;
+	z-index: 1;
+	background-color: #000;
+	opacity: 0.3;
+}
+
+.site-logo-text {
+	justify-content: center;
+	flex-grow: 1;
+	z-index: 5;
+}
+.site-logo-text > h1, .site-logo-text > h2 {
+	margin: 0;
+	text-align: center;
+	font-weight: 400;
+}
+
+.site-logo-text > h1 {
+	font-size: 60px;
+}
+
+.layout-svg-container {
+	z-index: 5;
+}
+
+.layout-svg-container > svg {
+	 display: block;
+}
+
+.splash-page .layout-svg-container {
+	fill: rgb(24, 29, 32);
+	stroke: rgb(24, 29, 32);
+	stroke-width: 2px;
+	/*fill:#231F20; stroke:#231F20*/
+}
+
+.header-buttons-container {
+	position: absolute;
+	width: 100%;
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	align-items: center;
+	padding: 40px 0px;
+}
+
+.header-buttons-container > button {
+	border-radius: 5px;
+	padding: 10px 20px;
+	margin: 10px;
+	cursor: pointer;
+	background: none;
+	color: #F9F9F9;
+	border: 2px solid #F9F9F9;
+	
+	font-size: 20px;
+	font-family: 'Quicksand', Arial, sans-serif;
+	font-weight: 400;
+	
+	-webkit-transition: anything .125s ease;
+    transition: all .125s ease;
+}
+
+.header-buttons-container > button:hover {
+	/*background: #F9F9F9;*/
+	background: rgba(249, 249, 249, 0.25);
+}
+
+.header-buttons-container > button:active {
+	/*background: #F9F9F9;*/
+	-webkit-transition: none;
+    transition: none;
+	background: rgba(249, 249, 249, 0.6);
+	color: rgb(24, 29, 32);
+}
+
+.layout-body {
+	background-repeat: no-repeat;
+	background-position: center top;
+	background-attachment: fixed;
+	background-size: cover;
+	position: relative;
+	overflow: hidden;
+}
+
+#layout-exam {
+	background-image: url("../images/sm2.jpg");
+}
+
+#layout-login {
+	background-image: url("../images/sm1.jpg");
+}
+
+.box-fadein {
+	position: absolute;
+	min-width: calc(20% + 200px);
+	/*width: 20%;*/
+	height: 50%;
+	background-color: rgb(24, 29, 32);
+	box-shadow: 5px 6px 5px 3px rgba(0, 0, 0, 0.4);
+	overflow: hidden;
+}
+
+#exam-box {
+	left: 50px;
+	bottom: 20%;
+}
+
+#login-box {
+	right: 50px;
+	top: 20%;
+}
+
+#login-response, #register-response {
+	margin: 5px;
+}
+
+.header-formbox fieldset, .header-formbox form {
+	height: 100%;
+}

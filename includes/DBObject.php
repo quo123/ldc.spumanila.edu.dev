@@ -3,9 +3,10 @@
  *  DB Object class made to simplify query code
  *  Copyright 2014-2016 Alvin R. Betoya
  *  Released under the MIT license (https://tldrlegal.com/license/mit-license)
- *	v0.4.4
+ *	v0.5.0
  * 
  *	changelog:
+ *	0.5.0	- added support for prepared statements
  *	0.4.4	- added variable timezone
  *	0.4.3	- initialized error
  *	0.4.2	- added affected rows
@@ -61,10 +62,16 @@ class DBObject {
 	private $host;
 	private $dbuser;
 	private $dbpass;
+	/**
+	 * The private mysqli connection object
+	 * @var mysqli 
+	 */
 	private $con;
 	private $lastid;
 	private $error = '';
+	private $errno = 0; //1062 for duplicate entry on unique key //added v0.5.0
 	private $affected;
+	private $numrows; //added v0.5.0
 	private $timezone = 'Asia/Manila'; // added v0.4.4
 
 	/**
@@ -78,7 +85,7 @@ class DBObject {
 		$this->host = $_host;
 		$this->dbuser = $_dbuser;
 		$this->dbpass = $_dbpass;
-		$this->database = $_database;
+		$this->database = $_database;		
 	}
 	
 	/** Escapes using mysqli_real_escape_string. */
@@ -95,6 +102,8 @@ class DBObject {
 	 * last insert id
 	 * error(s)
 	 * number of affected rows
+	 * @param string $sql SQL string
+	 * @return mysqli_result Query result set
 	 */
 	public function query($sql) {
 		$this->connect();
@@ -104,16 +113,52 @@ class DBObject {
 		$result = mysqli_query($this->con, $sql);
 		$this->lastid = mysqli_insert_id($this->con);
 		$this->error = mysqli_error($this->con);
+		$this->errno = mysqli_errno($this->con);
 		$this->affected = mysqli_affected_rows($this->con);
+		$this->numrows = mysqli_num_rows($this->con);
 		mysqli_close($this->con);
-
+		
+		return $result;
+	}
+	
+	/**
+	 * added v0.5.0
+	 * Prepare a statement.
+	 * @param string $sql SQL string
+	 * @return mysqli_stmt The prepared statement
+	 */
+	public function prepare($sql) {
+		$this->connect();
+		mysqli_set_charset($this->con, 'utf8');
+		mysqli_select_db($this->con, $this->database);
+		mysqli_query($this->con, "SET time_zone = '{$this->timezone}'");
+		return mysqli_prepare($this->con, $sql);
+	}
+	
+	/**
+	 * added v0.5.0
+	 * Executes a prepared statement.
+	 * @param mysqli_stmt $query The query to execute
+	 * @return mysqli_result Query result set
+	 */
+	public function execute(mysqli_stmt $query) {
+		$query->execute();
+		$result = $query->get_result();
+		$this->lastid = $query->insert_id;
+		$this->error = $query->error;
+		$this->errno = $query->errno;
+		$this->affected = $query->affected_rows;
+		$this->numrows = $query->num_rows;
+		$query->close();
+		mysqli_close($this->con);
+		
 		return $result;
 	}
 	
 	private function connect() {
 		$this->con = mysqli_connect($this->host, $this->dbuser, $this->dbpass);
 		if (mysqli_connect_errno()) {
-			echo 'Error: Cannot connect to database!';
+			$this->error = 'Error: Cannot connect to database!';
 			return false;
 		}
 		return true;
@@ -174,5 +219,15 @@ class DBObject {
 	/** added v0.4.4 */
 	function setTimezone($timezone) {
 		$this->timezone = $timezone;
+	}
+	
+	/** added v0.5.0 */
+	function getErrno() {
+		return $this->errno;
+	}
+	
+	/** added v0.5.0 */
+	function getNumrows() {
+		return $this->numrows;
 	}
 }

@@ -26,8 +26,8 @@
  * //look up username, select password and registration date. Salt is computed from regdate so we need that too
  * SELECT [userpass], [regdate] FROM [usertable] WHERE [username] = '$username'
  * 
- * //convert regtime to timestamp
- * $timestamp = Crypto::create_timestamp($row["regtime"]);
+ * //convert regdate to timestamp
+ * $timestamp = Crypto::create_timestamp($row["regdate"]);
  * 
  * //hash the enetered password
  * $encpass = Crypto::encrypt_password($password, $timestamp[0]);
@@ -42,14 +42,14 @@ class Crypto {
 	 * @return string in format: August 27, 2014, 19:47:28.894163
 	 */
 	public static function create_microdate($timestamp) {
-		date_default_timezone_set($this->timezone); //put this at start of php code to sync time zone
+		date_default_timezone_set(self::$timezone); //put this at start of php code to sync time zone
 		$date = explode(' ', $timestamp[1]);
 		return date('F j, Y, H:i:s.', $date[1]).substr($timestamp[0], 10, 6); //returns date in format: August 27, 2014, 19:47:28.894163
 	}
 
 	/** @return array() in format: Array ( [0] => 1409140048894163 [1] => 0.89416300 1409140048 ) */
 	 public static function get_timestamp() {
-		date_default_timezone_set($this->timezone);
+		date_default_timezone_set(self::$timezone);
 		$u = microtime();
 		return array(substr($u, 11, 10).substr($u, 2, 6), $u); //returns array in format: Array ( [0] => 1409140048894163 [1] => 0.89416300 1409140048 )
 	}
@@ -60,16 +60,16 @@ class Crypto {
 	 * @return array() in format: Array ( [0] => 1409140048894163 [1] => 0.89416300 1409140048 )
 	 */
 	public static function create_timestamp($date) {
-		date_default_timezone_set($this->timezone);
+		date_default_timezone_set(self::$timezone);
 		$parts = explode('.', $date);
 		return array(strtotime($parts[0]).$parts[1], '0.'."{$parts[1]}00".' '.strtotime($parts[0])); //same as above
 	}
 
 	/**
 	 * Generates a whirlpool hash of $pass using a salt derived from $regtime.
-	 * @param string $pass
-	 * @param string $regtime
-	 * @return string
+	 * @param string $pass The user's password
+	 * @param string $regtime Index 0 of create_timestamp array
+	 * @return string Hashed password
 	 */
 	public static function encrypt_password($pass, $regtime) {
 		$salt = '$2y$07$'.substr(md5($regtime), 8, 22);

@@ -1,0 +1,35 @@
+/*
+Flex layout skeletons 
+*/
+
+.flexbox-vertical {
+	display: flex;
+	flex-direction: column;
+}
+
+.flexbox-horizontal {
+	display: flex;
+	flex-direction: row;
+}
+
+.flexbox-fulljustify {
+	justify-content: space-between;
+}
+
+.flexitem {
+	flex: 1;
+}
+
+.flexitem-align-start {
+	align-self: flex-start;
+	flex: 1;
+}
+
+.flexitem-align-end {
+	align-self: flex-end;
+	flex: 1;
+}
+
+.flex-filler {
+	flex: 5;
+}

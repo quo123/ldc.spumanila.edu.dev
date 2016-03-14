@@ -1,6 +1,5 @@
 $(function() {
-
-console.log('asds');
-
-
-})
+	$('.nofocus').on('focus', function () {
+		$(this).blur();
+	});
+});
