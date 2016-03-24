@@ -111,9 +111,15 @@ $backgroundurl = getBackgroundImage(mt_rand(1, 5));
 		</div>
 		<div class="flex-filler"></div>
 		<div class="box-fadein header-formbox" id="exam-box">
-			<form>
+			<form id="exam-register-form" class="generic-form">
 				<fieldset>
 					<legend>Exam Registration</legend>
+					<div class="flexbox-vertical fillheight">
+						<input type="text" name="examcode" id="exam-examcode" class="focusglow flexitem" placeholder="Enter exam code..." autocomplete="off" maxlength="20" required=""/>
+						<span id="register-response" style="display:none">&nbsp;</span>
+						<input type="submit" id="register-submit" value="Take Exam" tabindex="-1" class="nofocus flexitem"/>
+						<div class="flex-filler"></div>
+					</div>
 				</fieldset>
 			</form>
 		</div>

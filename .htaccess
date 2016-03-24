@@ -14,6 +14,7 @@ RewriteRule ^(.*)$ http://%1%{REQUEST_URI} [R=301,QSA,NC,L]
 
 RewriteCond %{HTTP_REFERER} !^$
 RewriteCond %{HTTP_REFERER} !^https?://ldc.spumanila.edu.dev/.*$ [NC]
+RewriteCond %{HTTP_REFERER} !^https?://ldc.*.xip.io/.*$ [NC]
 RewriteRule \.(gif|jpe?g|png|pdf|docx?|xlsx?|pps?t?x?|js|css)$ - [F,NC,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
