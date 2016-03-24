@@ -12,16 +12,22 @@ if (!empty($_POST['username']) && !empty($_POST['userpass'])) {
 	$username = $_POST['username'];
 	
 //	$sql = "SELECT * FROM userinfo WHERE userpass = '$hashpass' AND username = '$username'";
-	$sql = "SELECT * FROM userinfo WHERE username = ?";
+	$sql = "SELECT * FROM userinfo WHERE username = ?username:s";
 	$time = rand(1000*1000, 1000*500);
 	usleep($time);
 	
-	$query = $db->prepare($sql);
-	$query->bind_param('s', $username);
+//	$query = $db->prepare($sql);
+//	error_log('query from login: ' . print_r($query, true));
+//	$query->bind_param('s', $username);
+	$db->namedPrepare($sql);
+	$db->namedBind(array(
+		"username" => $username
+	));
 	
 	$json['status'] = 1;
 	$json['response'] = 'Invalid username/password!';
-	foreach ($db->execute($query) as $row) {
+//	foreach ($db->execute($query) as $row) {
+	foreach ($db->executeQuery() as $row) {
 		if ($db->getNumrows() > 1) {
 			$json['status'] = 3;
 			$json['response'] = 'Duplicate username detected! Please clean the database.';
@@ -34,7 +40,7 @@ if (!empty($_POST['username']) && !empty($_POST['userpass'])) {
 			error_log($hashpass);
 			error_log($row['userpass']);
 			if ($hashpass === $row['userpass']) {
-				$json['status'] = 0;
+ 				$json['status'] = 0;
 				$json['response'] = "Welcome back, {$row['username']}!";
 			}
 		} else {
