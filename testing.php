@@ -7,6 +7,27 @@ require_once 'includes/util.php';
 $session = new MySessions(COOKIE_NAME);
 $cooking = $session->init();
 
+$db = new DBObject(CURRENT_DB);
+$sql = "SELECT * FROM userinfo WHERE username = ?name:s OR userpass = ?pass:s";
+$db->namedPrepare($sql);
+$db->namedBind(array(
+	"name" => "001",
+	"pass" => "password"
+));
+$db->namedBind(array(
+	"name" => "001"
+));
+foreach ($db->executeQuery(false) as $row) {
+	error_log('row:' . print_r($row, true));
+}
+
+$db->namedBind(array(
+	"name" => "002"
+));
+foreach ($db->executeQuery() as $row) {
+	error_log('row:' . print_r($row, true));
+}
+
 ?>
 <!DOCTYPE html>
 <html>
