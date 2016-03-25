@@ -1,66 +1,83 @@
 <?php
 /**
- *  DB Object wrapper class made to simplify query code
- *  Copyright 2014-2016 Alvin R. Betoya
- *  Released under the MIT license (https://tldrlegal.com/license/mit-license)
- *	version 0.5.2
+ * DB Object wrapper class made to simplify query code
+ * Copyright 2014-2016 Alvin R. Betoya
+ * Released under the MIT license (https://tldrlegal.com/license/mit-license)
+ * version 0.5.2
  * 
- *	changelog:
- *	0.5.2	- refactored code; only one prepare and execute method is exposed
- *	0.5.1	- allowed named binding
- *	0.5.0	- added support for prepared statements
- *	0.4.4	- added variable timezone
- *	0.4.3	- initialized error
- *	0.4.2	- added affected rows
- *	0.4.1	- added error reporting
- *	0.4.0	- migrated to mysqli
- *	0.3.2	- added last insert id method
- *	0.3.1	- fixed bug on nonstandard character queries
+ * <pre>
+ * changelog:
+ * 0.5.2	- refactored code; only one prepare and execute method is exposed
+ * 0.5.1	- allowed named binding
+ * 0.5.0	- added support for prepared statements
+ * 0.4.4	- added variable timezone
+ * 0.4.3	- initialized error
+ * 0.4.2	- added affected rows
+ * 0.4.1	- added error reporting
+ * 0.4.0	- migrated to mysqli
+ * 0.3.2	- added last insert id method
+ * 0.3.1	- fixed bug on nonstandard character queries
  *
- *	==Usage instructions==
- *	General:
- *	Php symbol "->" is equivalent to java/.net ".".
- *		Ex:	PHP		- Object->method("args");
- *			Java	- Object.method("args");
+ * ==Usage instructions==
+ * General:
+ * Php symbol "->" is equivalent to java/.net ".".
+ * 	Ex:	PHP		- Object->method("args");
+ * 		Java	- Object.method("args");
  *
- *	Create a new DB connection using:
- *		$db = new DBObject("database_name"); OR
- *		$db = new DBObject("database_name", "host_name"); OR
- *		$db = new DBObject("database_name", "host_name", "user_name"); OR
- *		$db = new DBObject("database_name", "host_name", "user_name", "password");
+ * Create a new DB connection using:
+ * 	$db = new DBObject("database_name"); OR
+ * 	$db = new DBObject("database_name", "host_name"); OR
+ * 	$db = new DBObject("database_name", "host_name", "user_name"); OR
+ * 	$db = new DBObject("database_name", "host_name", "user_name", "password");
  *
- *	IMPORTANT! USE escape() FUNCTION FOR NON-HASHED QUERY VARS AND PRE_HASHED PASSWORD:
- *		$usern = $db->escape($_POST["username"]); //escape to protect against SQL injection attacks
- *		$sql = "SELECT * FROM usertable WHERE username = '$usern' AND userpass = '$encpass'";
- *		$sql = "INSERT INTO usertable VALUES ('$usern', '$encpass')";
- *
- *	IMPORTANT! USE intval() when using ints in query:
- *		$id = intval($id);
- *		$sql = "SELECT * FROM usertable WHERE userid = $id";
- *
- *	SELECT statements:
- *		$sql = "SELECT ...";
- *		$result = $db->query($sql);
- *		if ($row = mysqli_fetch_array($result)) {
- *			//TODO: code that operates on query results [$row]
- *		} else {
- *			//TODO: code that runs if $row is empty
- *		}
- *			OR
- *		while ($row = mysqli_fetch_array($result)) {
- *			//TODO: code that operates on query results [$row]
- *		}
- *
- *	INSERT and DELETE statements:
- *		$sql = "INSERT ...";
- *		if ($db->query($sql)) {
- *			//TODO: code for successful update
- *		} else {
- *			//TODO: code for failed update
- *		}
+ * ==With Prepared Statements== IMPORTANT! Please use prepared statements whenever possible
+ *  //prepare the sql
+ *  $db->prepare('SELECT * FROM usertable WHERE userid = ?id:s AND userpass = ?password:s');
  * 
- *	Prepared statements:
- *	
+ *  //bind the parameters
+ *  $db->bind(array(
+ *		'id' => $id,
+ *		'password' => $password
+ *  ));
+ * 
+ *  //execute the query and fetch results
+ *  foreach ($db->execute() as row) {
+ *		//TODO: code that operates on query results [$row]
+ *		//eg: $username = $row['username'];
+ *  }
+ * 
+ * 
+ * ==Without Prepared Statements==
+ * IMPORTANT! USE escape() FUNCTION FOR NON-HASHED QUERY VARS AND PRE_HASHED PASSWORD:
+ * 	$usern = $db->escape($_POST["username"]); //escape to protect against SQL injection attacks
+ * 	$sql = "SELECT * FROM usertable WHERE username = '$usern' AND userpass = '$encpass'";
+ *	$sql = "INSERT INTO usertable VALUES ('$usern', '$encpass')";
+ *
+ * IMPORTANT! USE intval() when using ints in query:
+ * 	$id = intval($id);
+ * 	$sql = "SELECT * FROM usertable WHERE userid = $id";
+ *
+ * SELECT statements:
+ * 	$sql = "SELECT ...";
+ * 	$result = $db->query($sql);
+ * 	if ($row = mysqli_fetch_array($result)) {
+ * 		//TODO: code that operates on query results [$row]
+ * 	} else {
+ * 		//TODO: code that runs if $row is empty
+ * 	}
+ * 		OR
+ * 	while ($row = mysqli_fetch_array($result)) {
+ * 		//TODO: code that operates on query results [$row]
+ * 	}
+ *
+ * INSERT and DELETE statements:
+ * 	$sql = "INSERT ...";
+ * 	if ($db->query($sql)) {
+ * 		//TODO: code for successful update
+ * 	} else {
+ * 		//TODO: code for failed update
+ * 	}
+ * </pre>
  */
 class DBObject {
 	private $database;
@@ -165,6 +182,9 @@ class DBObject {
 	public function prepare($sql) {
 		$this->clearParams();
 		$this->usenamed = false;
+		if ($this->statement) {
+			$this->statement->close();
+		}
 		
 		$pattern = "/\?([A-Za-z_]+[\w]*):([idsb])/";
 		if (preg_match_all($pattern, $sql, $matches, PREG_SET_ORDER)) {
@@ -206,8 +226,8 @@ class DBObject {
 	/**
 	 * Executes the previously prepared statement.
 	 * @since 0.5.2
-	 * @param boolean $close Closes the query if set to <code>TRUE</code>.
-	 * Set to <code>FALSE</code> to allow further parameter binds on this prepared statement.
+	 * @param boolean $close Closes the statement if set to <code>TRUE</code>.
+	 * Default is <code>FALSE</code>, which allows further parameter binds on this prepared statement.
 	 * @return mysqli_result Query result set
 	 */
 	public function execute($close = false) {
