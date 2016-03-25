@@ -19,15 +19,14 @@ if (!empty($_POST['username']) && !empty($_POST['userpass'])) {
 //	$query = $db->prepare($sql);
 //	error_log('query from login: ' . print_r($query, true));
 //	$query->bind_param('s', $username);
-	$db->namedPrepare($sql);
-	$db->namedBind(array(
+	$db->prepare($sql);
+	$db->bind(array(
 		"username" => $username
 	));
 	
 	$json['status'] = 1;
 	$json['response'] = 'Invalid username/password!';
-//	foreach ($db->execute($query) as $row) {
-	foreach ($db->executeQuery() as $row) {
+	foreach ($db->execute() as $row) {
 		if ($db->getNumrows() > 1) {
 			$json['status'] = 3;
 			$json['response'] = 'Duplicate username detected! Please clean the database.';

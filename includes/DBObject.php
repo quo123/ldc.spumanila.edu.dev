@@ -3,9 +3,10 @@
  *  DB Object wrapper class made to simplify query code
  *  Copyright 2014-2016 Alvin R. Betoya
  *  Released under the MIT license (https://tldrlegal.com/license/mit-license)
- *	v0.5.1
+ *	version 0.5.2
  * 
  *	changelog:
+ *	0.5.2	- refactored code; only one prepare and execute method is exposed
  *	0.5.1	- allowed named binding
  *	0.5.0	- added support for prepared statements
  *	0.4.4	- added variable timezone
@@ -67,7 +68,7 @@ class DBObject {
 	private $dbuser;
 	private $dbpass;
 	/**
-	 * The private mysqli connection object
+	 * The private mysqli connection object.
 	 * @var mysqli 
 	 */
 	private $con;
@@ -79,17 +80,24 @@ class DBObject {
 	private $timezone = 'Asia/Manila'; // added v0.4.4
 
 	/**
-	 * Added v0.5.1 
+	 * The prepared statement.
+	 * @since 0.5.1
 	 * @var mysqli_stmt 
 	 */
-	private $namedstmt;
+	private $statement;
 	private $paramnames;
 	private $paramtypes;
 	private $paramvals;
 	
+	/**
+	 * Set to true if using named parameters.
+	 * @since 0.5.2
+	 * @var boolean 
+	 */
+	private $usenamed = false;
 	
 	/**
-	 * Create a new DB connection
+	 * Create a new DB connection.
 	 * @param string $_database The database name.
 	 * @param string $_host The host name/url.
 	 * @param string $_dbuser The database user name.
@@ -134,17 +142,89 @@ class DBObject {
 		$this->affected = mysqli_affected_rows($this->con);
 		$this->numrows = mysqli_num_rows($this->con);
 		mysqli_close($this->con);
-		
 		return $result;
 	}
 	
 	/**
-	 * Added v0.5.0
-	 * Prepare a statement. To use named parameters, use <code>namedPrepare()</code> instead.
+	 * Prepare a statement. Automatically detects if named parameters are used.
+	 * @since 0.5.2
+	 * @param string $sql The SQL to prepare. Named parameters are automcatically detected
+	 * and are supported via the following format:
+	 * <pre><b>?<PARAMETER_NAME>:<PARAMETER_TYPE></b></pre><br />
+	 * Example:<br />
+	 * <code>$db->prepare("SELECT * FROM example WHERE username = 'admin' AND password = ?username:s");</code><br /><br />
+	 * <code>PARAMETER_TYPE</code> can be any of the following:
+	 * <pre>
+	 * s -> string
+	 * i -> integer
+	 * d -> decimal
+	 * b -> blob
+	 * </pre>
+	 * @return boolean Returns <code>TRUE</code> on success, <code>FALSE</code> on error.
+	 */
+	public function prepare($sql) {
+		$this->clearParams();
+		$this->usenamed = false;
+		
+		$pattern = "/\?([A-Za-z_]+[\w]*):([idsb])/";
+		if (preg_match_all($pattern, $sql, $matches, PREG_SET_ORDER)) {
+			$sql = $this->prepareNamed($sql, $matches, $pattern);
+			$this->usenamed = true;
+		}
+		
+		try {
+			$this->statement = $this->prepareBasic($sql);
+			error_log('statement: ' . print_r($this->statement, true));
+			return true;
+		} catch (Exception $ex) {
+			error_log($ex->getMessage() . ' ' . print_r($ex, true));
+			return false;
+		}
+	}
+		
+	/**
+	 * Bind parameters to prepared statement.
+	 * @since 0.5.2
+	 * @param array $params An associative array of parameters to bind.
+	 * <p>For named paramenters, keys should coincide with the names of the parameters. Ex:</p>
+	 * <code>$db->bind(array('username' => 'admin', 'password' => $password));</code>
+	 * 
+	 * <p>For unnamed parameters, the parameter array needs to be prefixed by an element containing the parameter types. Ex:</p>
+	 * <code>$db->bind(array('ss', 'admin', $password));</code>
+	 * 
+	 * Named parameter binding just stores the parameters in the <code>DBObject</code> object.
+	 * Actual binding happens only when the query is executed.
+	 */
+	public function bind($params) {
+		if ($this->usenamed) {
+			$this->bindNamed($params);
+		} else {
+			$this->bindBasic($params);
+		}
+	}
+	
+	/**
+	 * Executes the previously prepared statement.
+	 * @since 0.5.2
+	 * @param boolean $close Closes the query if set to <code>TRUE</code>.
+	 * Set to <code>FALSE</code> to allow further parameter binds on this prepared statement.
+	 * @return mysqli_result Query result set
+	 */
+	public function execute($close = false) {
+		if ($this->usenamed) {
+			return $this->executeNamed($close);
+		} else {
+			return $this->executeBasic($this->statement, $close);
+		}
+	}
+	
+	/**
+	 * Prepare a statement. To use named parameters, use <code>prepareNamed()</code> instead.
+	 * @since 0.5.0
 	 * @param string $sql The SQL string.
 	 * @return mysqli_stmt The prepared statement
 	 */
-	public function prepare($sql) {
+	private function prepareBasic($sql) {
 		$this->connect();
 		mysqli_set_charset($this->con, 'utf8');
 		mysqli_select_db($this->con, $this->database);
@@ -153,14 +233,29 @@ class DBObject {
 	}
 	
 	/**
-	 * Added v0.5.0
+	 * Bind named parameters to prepared statement.
+	 * @since 0.5.2
+	 * @param array $params An associative array of parameters to bind.
+	 * Keys should coincide with the names of the parameters.<br />
+	 * This just stores the parameters in the <code>DBObject</code> object.
+	 * Actual binding happens only when the query is executed.
+	 */
+	private function bindBasic($params) {
+		$ref = new ReflectionClass('mysqli_stmt');
+		$method = $ref->getMethod('bind_param');
+		$method->invokeArgs($this->statement, $params);
+		error_log('statement: ' . print_r($this->statement, true));
+	}
+	
+	/**
 	 * Executes a prepared statement. When using named parameters, use <code>executeQuery()</code> instead.
+	 * @since 0.5.0
 	 * @param mysqli_stmt $query The query to execute
 	 * @param boolean $close Closes the query if set to <code>TRUE</code>.
 	 * Set to <code>FALSE</code> to allow further parameter binds on this prepared statement.
 	 * @return mysqli_result Query result set
 	 */
-	public function execute(mysqli_stmt $query, $close = true) {
+	private function executeBasic(mysqli_stmt $query, $close = true) {
 		$query->execute();
 		$result = $query->get_result();
 		$this->lastid = $query->insert_id;
@@ -177,8 +272,8 @@ class DBObject {
 	}
 	
 	/**
-	 * Added v0.5.1
 	 * Prepare a statement with named parameters.
+	 * @since 0.5.1
 	 * @param string $sql The sql to prepare. Named parameters are supported via the following format:
 	 * <pre><code>?<PARAMETER_NAME>:<PARAMETER_TYPE></code></pre>
 	 * e.g. <code>SELECT * FROM example WHERE username = ?username:s</code><br /><br />
@@ -188,10 +283,10 @@ class DBObject {
 	 * d -> decimal<br />
 	 * b -> blob<br />
 	 */
-	public function namedPrepare($sql) {
-		$this->clearParams();
-		$pattern = "/\?([A-Za-z_]+[\w]*):([idsb])/";
-		preg_match_all($pattern, $sql, $matches, PREG_SET_ORDER);
+	private function prepareNamed($sql, $matches, $pattern) {
+//		$this->clearParams();
+//		$pattern = "/\?([A-Za-z_]+[\w]*):([idsb])/";
+//		preg_match_all($pattern, $sql, $matches, PREG_SET_ORDER);
 		foreach ($matches as $val) {
 			error_log($val[1]);
 			$this->paramnames[] = $val[1];
@@ -201,25 +296,26 @@ class DBObject {
 		error_log('sql: ' . $sql);
 		error_log('paramnames: ' . print_r($this->paramnames, true));
 		error_log('paramtypes: ' . print_r($this->paramtypes, true));
-
-		try {
-			$this->namedstmt = $this->prepare($sql);
-			error_log('namedstmt: ' . print_r($this->namedstmt, true));
-			return true;
-		} catch (Exception $ex) {
-			return false;
-		}
+		
+		return $sql;
+//		try {
+//			$this->namedstmt = $this->prepareBasic($sql);
+//			error_log('namedstmt: ' . print_r($this->namedstmt, true));
+//			return true;
+//		} catch (Exception $ex) {
+//			return false;
+//		}
 	}
 	
 	/**
-	 * Added v0.5.1
 	 * Bind named parameters to prepared statement.
+	 * @since 0.5.1
 	 * @param array $params An associative array of parameters to bind.
 	 * Keys should coincide with the names of the parameters.<br />
 	 * This just stores the parameters in the <code>DBObject</code> object.
 	 * Actual binding happens only when the query is executed.
 	 */
-	public function namedBind($params) {
+	private function bindNamed($params) {
 		foreach ($params as $key => $val) {
 			$this->paramvals[$key] = $val;
 		}
@@ -227,13 +323,13 @@ class DBObject {
 	}
 	
 	/**
-	 * Added v0.5.1
 	 * Execute prepared statement with named parameters.
+	 * @since 0.5.1
 	 * @param boolean $close Closes the query if set to <code>TRUE</code>.
 	 * Set to <code>FALSE</code> to allow further parameter binds on this prepared statement.
 	 * @return mysqli_result Query result set.
 	 */
-	public function executeQuery($close = true) {
+	private function executeNamed($close = true) {
 		$vals = array();
 		$types = array(join('', $this->paramtypes));
 		foreach ($this->paramnames as $name) {
@@ -244,10 +340,10 @@ class DBObject {
 		error_log('bindarray: ' . print_r($bindarray, true));
 		$ref = new ReflectionClass('mysqli_stmt');
 		$method = $ref->getMethod('bind_param');
-		$method->invokeArgs($this->namedstmt, $bindarray);
+		$method->invokeArgs($this->statement, $bindarray);
 //		call_user_func_array('mysqli_stmt_bind_param', $bindarray);
-		error_log('namedstmt: ' . print_r($this->namedstmt, true));
-		return $this->execute($this->namedstmt, $close);
+		error_log('statement: ' . print_r($this->statement, true));
+		return $this->executeBasic($this->statement, $close);
 	}
 	
 	private function connect() {
@@ -297,38 +393,46 @@ class DBObject {
 		return $this->dbpass;
 	}
 
-	/** added v0.3.2 */
+	/** @since v0.3.2 */
 	public function getLastID() {
 		return $this->lastid;
 	}
 	
-	/** added v0.4.1 */
+	/** @since v0.4.1 */
 	public function getError() {
 		return $this->error;
 	}
 	
-	/** added v0.4.2 */
-	function getAffected() {
+	/** @since v0.4.2 */
+	public function getAffected() {
 		return $this->affected;
 	}
 
-	/** added v0.4.4 */
-	function getTimezone() {
+	/** @since v0.4.4 */
+	public function getTimezone() {
 		return $this->timezone;
 	}
 	
-	/** added v0.4.4 */
-	function setTimezone($timezone) {
+	/** @since v0.4.4 */
+	public function setTimezone($timezone) {
 		$this->timezone = $timezone;
 	}
 	
-	/** added v0.5.0 */
-	function getErrno() {
+	/** @since v0.5.0 */
+	public function getErrno() {
 		return $this->errno;
 	}
 	
-	/** added v0.5.0 */
-	function getNumrows() {
+	/**
+	 * Shortcut for getErrno() == $errno.
+	 * @since v0.5.2
+	 */
+	public function hasErrno($errno) {
+		return $this->errno == $errno;
+	}
+	
+	/** @since v0.5.0 */
+	public function getNumrows() {
 		return $this->numrows;
 	}
 }

@@ -8,23 +8,23 @@ $session = new MySessions(COOKIE_NAME);
 $cooking = $session->init();
 
 $db = new DBObject(CURRENT_DB);
-$sql = "SELECT * FROM userinfo WHERE username = ?name:s OR userpass = ?pass:s";
-$db->namedPrepare($sql);
-$db->namedBind(array(
-	"name" => "001",
-	"pass" => "password"
+$sql = 'SELECT * FROM userinfo WHERE username = ?name:s OR userpass = ?pass:s';
+$db->prepare($sql);
+$db->bind(array(
+	'name' => '001',
+	'pass' => 'password'
 ));
-$db->namedBind(array(
-	"name" => "001"
+$db->bind(array(
+	'name' => '001'
 ));
-foreach ($db->executeQuery(false) as $row) {
+foreach ($db->execute(false) as $row) {
 	error_log('row:' . print_r($row, true));
 }
-
-$db->namedBind(array(
-	"name" => "002"
+$sample = '002';
+$db->bind(array(
+	"name" => $sample
 ));
-foreach ($db->executeQuery() as $row) {
+foreach ($db->execute() as $row) {
 	error_log('row:' . print_r($row, true));
 }
 
