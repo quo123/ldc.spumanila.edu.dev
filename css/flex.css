@@ -31,5 +31,5 @@ Flex layout skeletons
 }
 
 .flex-filler {
-	flex: 5;
+	flex: 9999;
 }
