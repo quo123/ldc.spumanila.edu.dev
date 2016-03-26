@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS `article` (
   `article_text` mediumtext NOT NULL,
   PRIMARY KEY (`article_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
 --
 -- Dumping data for table `article`
 --
