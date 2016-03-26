@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 26, 2016 at 04:16 AM
+-- Generation Time: Mar 26, 2016 at 04:50 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -19,6 +19,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `ldc`
 --
+CREATE DATABASE IF NOT EXISTS `ldc` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `ldc`;
 
 -- --------------------------------------------------------
 
@@ -26,12 +28,14 @@ SET time_zone = "+00:00";
 -- Table structure for table `article`
 --
 
+DROP TABLE IF EXISTS `article`;
 CREATE TABLE IF NOT EXISTS `article` (
   `article_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `article_title` varchar(50) NOT NULL,
   `article_text` mediumtext NOT NULL,
   PRIMARY KEY (`article_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
 --
 -- Dumping data for table `article`
 --
@@ -45,6 +49,7 @@ INSERT INTO `article` (`article_id`, `article_title`, `article_text`) VALUES
 -- Table structure for table `test_arrange`
 --
 
+DROP TABLE IF EXISTS `test_arrange`;
 CREATE TABLE IF NOT EXISTS `test_arrange` (
   `arrange_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`arrange_id`)
@@ -56,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `test_arrange` (
 -- Table structure for table `test_fitbwc`
 --
 
+DROP TABLE IF EXISTS `test_fitbwc`;
 CREATE TABLE IF NOT EXISTS `test_fitbwc` (
   `question_id` int(11) NOT NULL AUTO_INCREMENT,
   `question_text` varchar(200) NOT NULL,
@@ -68,6 +74,7 @@ CREATE TABLE IF NOT EXISTS `test_fitbwc` (
 -- Table structure for table `test_fitbwc_answerfor`
 --
 
+DROP TABLE IF EXISTS `test_fitbwc_answerfor`;
 CREATE TABLE IF NOT EXISTS `test_fitbwc_answerfor` (
   `choice_id` int(11) unsigned NOT NULL,
   `question_id` int(11) unsigned NOT NULL,
@@ -81,6 +88,7 @@ CREATE TABLE IF NOT EXISTS `test_fitbwc_answerfor` (
 -- Table structure for table `test_fitbwc_choices`
 --
 
+DROP TABLE IF EXISTS `test_fitbwc_choices`;
 CREATE TABLE IF NOT EXISTS `test_fitbwc_choices` (
   `choice_id` int(11) NOT NULL AUTO_INCREMENT,
   `choice_text` varchar(200) NOT NULL,
@@ -93,6 +101,7 @@ CREATE TABLE IF NOT EXISTS `test_fitbwc_choices` (
 -- Table structure for table `test_ident`
 --
 
+DROP TABLE IF EXISTS `test_ident`;
 CREATE TABLE IF NOT EXISTS `test_ident` (
   `question_id` int(11) NOT NULL AUTO_INCREMENT,
   `question_text` varchar(200) NOT NULL,
@@ -105,6 +114,7 @@ CREATE TABLE IF NOT EXISTS `test_ident` (
 -- Table structure for table `test_ident_s`
 --
 
+DROP TABLE IF EXISTS `test_ident_s`;
 CREATE TABLE IF NOT EXISTS `test_ident_s` (
   `ident_s_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`ident_s_id`)
@@ -116,6 +126,7 @@ CREATE TABLE IF NOT EXISTS `test_ident_s` (
 -- Table structure for table `test_mc`
 --
 
+DROP TABLE IF EXISTS `test_mc`;
 CREATE TABLE IF NOT EXISTS `test_mc` (
   `question_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `question_text` varchar(200) NOT NULL,
@@ -139,6 +150,7 @@ INSERT INTO `test_mc` (`question_id`, `question_text`) VALUES
 -- Table structure for table `test_mc2`
 --
 
+DROP TABLE IF EXISTS `test_mc2`;
 CREATE TABLE IF NOT EXISTS `test_mc2` (
   `question_id` int(11) NOT NULL,
   `question_text` varchar(200) NOT NULL
@@ -150,6 +162,7 @@ CREATE TABLE IF NOT EXISTS `test_mc2` (
 -- Table structure for table `test_mc2_choices`
 --
 
+DROP TABLE IF EXISTS `test_mc2_choices`;
 CREATE TABLE IF NOT EXISTS `test_mc2_choices` (
   `choice_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `choice_text` int(200) NOT NULL,
@@ -162,6 +175,7 @@ CREATE TABLE IF NOT EXISTS `test_mc2_choices` (
 -- Table structure for table `test_mc2_qchoices`
 --
 
+DROP TABLE IF EXISTS `test_mc2_qchoices`;
 CREATE TABLE IF NOT EXISTS `test_mc2_qchoices` (
   `question_id` int(11) NOT NULL,
   `choice_id` int(11) NOT NULL,
@@ -174,6 +188,7 @@ CREATE TABLE IF NOT EXISTS `test_mc2_qchoices` (
 -- Table structure for table `test_mcma`
 --
 
+DROP TABLE IF EXISTS `test_mcma`;
 CREATE TABLE IF NOT EXISTS `test_mcma` (
   `question_id` int(11) NOT NULL AUTO_INCREMENT,
   `question_text` varchar(200) NOT NULL,
@@ -186,6 +201,7 @@ CREATE TABLE IF NOT EXISTS `test_mcma` (
 -- Table structure for table `test_mcma_choices`
 --
 
+DROP TABLE IF EXISTS `test_mcma_choices`;
 CREATE TABLE IF NOT EXISTS `test_mcma_choices` (
   `choice_id` int(11) NOT NULL AUTO_INCREMENT,
   `choice_text` varchar(200) NOT NULL,
@@ -198,6 +214,7 @@ CREATE TABLE IF NOT EXISTS `test_mcma_choices` (
 -- Table structure for table `test_mcma_qchoices`
 --
 
+DROP TABLE IF EXISTS `test_mcma_qchoices`;
 CREATE TABLE IF NOT EXISTS `test_mcma_qchoices` (
   `question_id` int(11) NOT NULL,
   `choice_id` int(11) NOT NULL,
@@ -210,6 +227,7 @@ CREATE TABLE IF NOT EXISTS `test_mcma_qchoices` (
 -- Table structure for table `test_mc_choices`
 --
 
+DROP TABLE IF EXISTS `test_mc_choices`;
 CREATE TABLE IF NOT EXISTS `test_mc_choices` (
   `choice_id` int(11) NOT NULL,
   `choice_text` varchar(200) NOT NULL
@@ -221,6 +239,7 @@ CREATE TABLE IF NOT EXISTS `test_mc_choices` (
 -- Table structure for table `test_mc_qchoices`
 --
 
+DROP TABLE IF EXISTS `test_mc_qchoices`;
 CREATE TABLE IF NOT EXISTS `test_mc_qchoices` (
   `question_id` int(11) unsigned NOT NULL,
   `choice_id` int(11) unsigned NOT NULL,
@@ -234,6 +253,7 @@ CREATE TABLE IF NOT EXISTS `test_mc_qchoices` (
 -- Table structure for table `test_mt`
 --
 
+DROP TABLE IF EXISTS `test_mt`;
 CREATE TABLE IF NOT EXISTS `test_mt` (
   `question_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `question_text` varchar(200) NOT NULL,
@@ -246,6 +266,7 @@ CREATE TABLE IF NOT EXISTS `test_mt` (
 -- Table structure for table `test_mt_qchoices`
 --
 
+DROP TABLE IF EXISTS `test_mt_qchoices`;
 CREATE TABLE IF NOT EXISTS `test_mt_qchoices` (
   `question_id` int(11) NOT NULL,
   `choice_id` int(11) NOT NULL,
@@ -258,6 +279,7 @@ CREATE TABLE IF NOT EXISTS `test_mt_qchoices` (
 -- Table structure for table `userinfo`
 --
 
+DROP TABLE IF EXISTS `userinfo`;
 CREATE TABLE IF NOT EXISTS `userinfo` (
   `userid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(20) NOT NULL,
