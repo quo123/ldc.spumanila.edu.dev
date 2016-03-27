@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 26, 2016 at 04:50 AM
+-- Generation Time: Mar 27, 2016 at 04:49 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -229,9 +229,36 @@ CREATE TABLE IF NOT EXISTS `test_mcma_qchoices` (
 
 DROP TABLE IF EXISTS `test_mc_choices`;
 CREATE TABLE IF NOT EXISTS `test_mc_choices` (
-  `choice_id` int(11) NOT NULL,
-  `choice_text` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `choice_id` int(11) NOT NULL AUTO_INCREMENT,
+  `choice_text` varchar(200) NOT NULL,
+  PRIMARY KEY (`choice_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
+
+--
+-- Dumping data for table `test_mc_choices`
+--
+
+INSERT INTO `test_mc_choices` (`choice_id`, `choice_text`) VALUES
+(1, 'President of Stanford University'),
+(2, 'CEO of Apple Computer'),
+(3, 'President of Reed University'),
+(4, 'Stefano Jobs'),
+(5, 'unwed college graduate student'),
+(6, 'a lawyer and his wife'),
+(7, 'high school and college drop outs'),
+(8, 'college graduates'),
+(9, 'to say firmly that you will do something'),
+(10, 'to say firmly that you will not do something'),
+(11, 'to say that you are excited to do something'),
+(12, 'to say that you are not excited to do something'),
+(13, 'The speaker learned calligraphy at Reed University'),
+(14, 'The speaker didn''t see the importance of attending a university'),
+(15, 'The speaker believed that one''s decisions in the past are related to one''s future life'),
+(16, 'The speaker dropped out of college completely and decided to work'),
+(17, 'You cannot immediately realize the importance of your experiences. It takes time'),
+(18, 'If you can see the value of something in the present, then it will be good for your future'),
+(19, 'It is hard to know what will happen in one''s future, so it is better to take things easy'),
+(20, 'You should plan your future well by avoiding mistakes and making wrong decisions');
 
 -- --------------------------------------------------------
 
@@ -244,7 +271,7 @@ CREATE TABLE IF NOT EXISTS `test_mc_qchoices` (
   `question_id` int(11) unsigned NOT NULL,
   `choice_id` int(11) unsigned NOT NULL,
   `is_correct` tinyint(1) NOT NULL,
-  PRIMARY KEY (`choice_id`)
+  PRIMARY KEY (`question_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
